@@ -124,14 +124,10 @@ public class LoginFrame extends JFrame {
         }
     }
  
-    private void openNextScreen(User user) {
-        // TODO: replace this with the dashboard once DashboardFrame exists:
-        //   new DashboardFrame().setVisible(true);
-        //   dispose();
-        JOptionPane.showMessageDialog(this,
-                "Welcome, " + user.getFullName() + "!\nRole: " + user.getRole(),
-                "Login Successful", JOptionPane.INFORMATION_MESSAGE);
-    }
+  private void openNextScreen(User user) {
+    new DashboardFrame().setVisible(true);
+    dispose();
+}
  
     private void clearFields() {
         usernameField.setText("");
