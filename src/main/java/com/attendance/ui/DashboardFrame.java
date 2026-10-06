@@ -1,5 +1,6 @@
 package com.attendance.ui;
 
+import com.attendance.dao.AttendanceDAO;
 import com.attendance.dao.DepartmentDAO;
 import com.attendance.dao.EmployeeDAO;
 import com.attendance.model.User;
@@ -10,6 +11,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 /**
  * Landing screen after login: metric cards, menu bar, and navigation buttons.
@@ -18,13 +20,15 @@ public class DashboardFrame extends JFrame {
 
     private final EmployeeDAO employeeDAO = new EmployeeDAO();
     private final DepartmentDAO departmentDAO = new DepartmentDAO();
+    private final AttendanceDAO attendanceDAO = new AttendanceDAO();
 
     private final JLabel totalEmployeesValue = new JLabel("0", SwingConstants.CENTER);
     private final JLabel departmentsValue = new JLabel("0", SwingConstants.CENTER);
     private final JLabel presentTodayValue = new JLabel("-", SwingConstants.CENTER);
     private final JLabel pendingLeavesValue = new JLabel("-", SwingConstants.CENTER);
 
-    private EmployeeFrame employeeFrame; // reused so only one copy opens
+    private EmployeeFrame employeeFrame;     // reused so only one copy opens
+    private AttendanceFrame attendanceFrame; // same for attendance
 
     public DashboardFrame() {
         setTitle("Employee Attendance Management System - Dashboard");
@@ -58,7 +62,7 @@ public class DashboardFrame extends JFrame {
 
         JMenu manage = new JMenu("Manage");
         manage.add(menuItem("Employees", this::openEmployees));
-        manage.add(menuItem("Attendance", () -> comingSoon("Attendance")));
+        manage.add(menuItem("Attendance", this::openAttendance));
         manage.add(menuItem("Leave Requests", () -> comingSoon("Leave")));
         manage.add(menuItem("Reports", () -> comingSoon("Reports")));
 
@@ -100,7 +104,7 @@ public class DashboardFrame extends JFrame {
         JPanel nav = new JPanel(new GridLayout(1, 4, 15, 0));
         nav.setBorder(BorderFactory.createTitledBorder("Quick Access"));
         nav.add(navButton("Employees", this::openEmployees));
-        nav.add(navButton("Attendance", () -> comingSoon("Attendance")));
+        nav.add(navButton("Attendance", this::openAttendance));
         nav.add(navButton("Leave Requests", () -> comingSoon("Leave")));
         nav.add(navButton("Reports", () -> comingSoon("Reports")));
 
@@ -156,8 +160,9 @@ public class DashboardFrame extends JFrame {
         try {
             totalEmployeesValue.setText(String.valueOf(employeeDAO.getAllEmployees().size()));
             departmentsValue.setText(String.valueOf(departmentDAO.getAllDepartments().size()));
-            // TODO: Present Today -> AttendanceDAO, Pending Leaves -> LeaveDAO
-            //       (waiting until those DAOs are reviewed)
+            presentTodayValue.setText(String.valueOf(
+                    attendanceDAO.getPresentEmployeeCount(LocalDate.now().toString())));
+            // TODO: Pending Leaves -> LeaveDAO (after LeaveDAO is reviewed)
         } catch (SQLException ex) {
             totalEmployeesValue.setText("!");
             departmentsValue.setText("!");
@@ -175,6 +180,16 @@ public class DashboardFrame extends JFrame {
         }
     }
 
+    private void openAttendance() {
+        if (attendanceFrame == null || !attendanceFrame.isDisplayable()) {
+            attendanceFrame = new AttendanceFrame();
+            attendanceFrame.setVisible(true);
+        } else {
+            attendanceFrame.setState(Frame.NORMAL);
+            attendanceFrame.toFront();
+        }
+    }
+
     private void comingSoon(String screen) {
         JOptionPane.showMessageDialog(this,
                 "The " + screen + " screen has not been built yet.",
@@ -188,6 +203,7 @@ public class DashboardFrame extends JFrame {
 
         SessionManager.logout();
         if (employeeFrame != null) employeeFrame.dispose();
+        if (attendanceFrame != null) attendanceFrame.dispose();
         dispose();
         new LoginFrame().setVisible(true);
     }
