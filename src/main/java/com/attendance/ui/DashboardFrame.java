@@ -3,6 +3,7 @@ package com.attendance.ui;
 import com.attendance.dao.AttendanceDAO;
 import com.attendance.dao.DepartmentDAO;
 import com.attendance.dao.EmployeeDAO;
+import com.attendance.dao.LeaveDAO;
 import com.attendance.model.User;
 import com.attendance.util.SessionManager;
 
@@ -21,6 +22,7 @@ public class DashboardFrame extends JFrame {
     private final EmployeeDAO employeeDAO = new EmployeeDAO();
     private final DepartmentDAO departmentDAO = new DepartmentDAO();
     private final AttendanceDAO attendanceDAO = new AttendanceDAO();
+    private final LeaveDAO leaveDAO = new LeaveDAO();
 
     private final JLabel totalEmployeesValue = new JLabel("0", SwingConstants.CENTER);
     private final JLabel departmentsValue = new JLabel("0", SwingConstants.CENTER);
@@ -29,6 +31,8 @@ public class DashboardFrame extends JFrame {
 
     private EmployeeFrame employeeFrame;     // reused so only one copy opens
     private AttendanceFrame attendanceFrame; // same for attendance
+    private LeaveFrame leaveFrame;
+    private ReportFrame reportFrame;
 
     public DashboardFrame() {
         setTitle("Employee Attendance Management System - Dashboard");
@@ -63,8 +67,8 @@ public class DashboardFrame extends JFrame {
         JMenu manage = new JMenu("Manage");
         manage.add(menuItem("Employees", this::openEmployees));
         manage.add(menuItem("Attendance", this::openAttendance));
-        manage.add(menuItem("Leave Requests", () -> comingSoon("Leave")));
-        manage.add(menuItem("Reports", () -> comingSoon("Reports")));
+        manage.add(menuItem("Leave Requests", this::openLeave));
+        manage.add(menuItem("Reports", this::openReports));
 
         bar.add(file);
         bar.add(manage);
@@ -105,8 +109,8 @@ public class DashboardFrame extends JFrame {
         nav.setBorder(BorderFactory.createTitledBorder("Quick Access"));
         nav.add(navButton("Employees", this::openEmployees));
         nav.add(navButton("Attendance", this::openAttendance));
-        nav.add(navButton("Leave Requests", () -> comingSoon("Leave")));
-        nav.add(navButton("Reports", () -> comingSoon("Reports")));
+        nav.add(navButton("Leave Requests", this::openLeave));
+        nav.add(navButton("Reports", this::openReports));
 
         JPanel navWrap = new JPanel(new BorderLayout());
         navWrap.add(nav, BorderLayout.NORTH);
@@ -162,7 +166,7 @@ public class DashboardFrame extends JFrame {
             departmentsValue.setText(String.valueOf(departmentDAO.getAllDepartments().size()));
             presentTodayValue.setText(String.valueOf(
                     attendanceDAO.getPresentEmployeeCount(LocalDate.now().toString())));
-            // TODO: Pending Leaves -> LeaveDAO (after LeaveDAO is reviewed)
+            pendingLeavesValue.setText(String.valueOf(leaveDAO.getPendingLeaveCount()));
         } catch (SQLException ex) {
             totalEmployeesValue.setText("!");
             departmentsValue.setText("!");
@@ -190,6 +194,32 @@ public class DashboardFrame extends JFrame {
         }
     }
 
+    private void openLeave() {
+        if (leaveFrame == null || !leaveFrame.isDisplayable()) {
+            leaveFrame = new LeaveFrame();
+            leaveFrame.setVisible(true);
+        } else {
+            leaveFrame.setState(Frame.NORMAL);
+            leaveFrame.toFront();
+        }
+    }
+
+    private void openReports() {
+        if (!(SessionManager.isAdmin() || SessionManager.isManager())) {
+            JOptionPane.showMessageDialog(this,
+                    "Reports are available to managers and administrators only.",
+                    "Access Denied", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (reportFrame == null || !reportFrame.isDisplayable()) {
+            reportFrame = new ReportFrame();
+            reportFrame.setVisible(true);
+        } else {
+            reportFrame.setState(Frame.NORMAL);
+            reportFrame.toFront();
+        }
+    }
+
     private void comingSoon(String screen) {
         JOptionPane.showMessageDialog(this,
                 "The " + screen + " screen has not been built yet.",
@@ -204,6 +234,8 @@ public class DashboardFrame extends JFrame {
         SessionManager.logout();
         if (employeeFrame != null) employeeFrame.dispose();
         if (attendanceFrame != null) attendanceFrame.dispose();
+        if (leaveFrame != null) leaveFrame.dispose();
+        if (reportFrame != null) reportFrame.dispose();
         dispose();
         new LoginFrame().setVisible(true);
     }
