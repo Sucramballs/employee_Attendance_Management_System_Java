@@ -19,6 +19,12 @@
         <artifactId>derby</artifactId>
         <version>10.16.1.1</version>
     </dependency>
+    
+    <dependency>
+    <groupId>com.formdev</groupId>
+    <artifactId>flatlaf</artifactId>
+    <version>3.5.4</version>
+</dependency>
     <!-- Apache Derby Tools (Needed for embedded schema creation scripts) -->
     <dependency>
         <groupId>org.apache.derby</groupId>

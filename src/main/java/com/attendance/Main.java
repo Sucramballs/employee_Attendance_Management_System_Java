@@ -1,31 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package com.attendance;
 
-/**
- *
- * @author Aaron
- */
+import com.attendance.ui.LoginFrame;
+import com.attendance.util.AppTheme;
+import com.attendance.util.DatabaseInitializer;
 
-// Main Entry Point for the Project
+import javax.swing.JOptionPane;
+import java.awt.EventQueue;
 
-
-  
-
-    public class Main {
+public class Main {
 
     public static void main(String[] args) {
+        AppTheme.install();                    // 1. look and feel first
+
         try {
-            com.attendance.util.DatabaseInitializer.initialize();
+            DatabaseInitializer.initialize();  // 2. create tables on first run
         } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(null,
+            JOptionPane.showMessageDialog(null,
                     "Database setup failed:\n" + e.getMessage(),
-                    "Startup Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    "Startup Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        java.awt.EventQueue.invokeLater(() ->
-                new com.attendance.ui.LoginFrame().setVisible(true));
+
+        EventQueue.invokeLater(() -> new LoginFrame().setVisible(true)); // 3. login
     }
 }

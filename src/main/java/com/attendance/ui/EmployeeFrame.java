@@ -4,6 +4,7 @@ import com.attendance.dao.DepartmentDAO;
 import com.attendance.dao.EmployeeDAO;
 import com.attendance.model.Department;
 import com.attendance.model.Employee;
+import com.attendance.util.AppTheme;
 import com.attendance.util.SessionManager;
 
 import javax.swing.*;
@@ -71,7 +72,7 @@ public class EmployeeFrame extends JFrame {
     private final JButton clearBtn = new JButton("CLEAR");
 
     public EmployeeFrame() {
-        setTitle("Employee Management");
+        AppTheme.brand(this, "Employees");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(1050, 680);
         setMinimumSize(new Dimension(900, 600));

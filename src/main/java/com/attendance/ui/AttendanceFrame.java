@@ -4,6 +4,7 @@ import com.attendance.dao.AttendanceDAO;
 import com.attendance.dao.EmployeeDAO;
 import com.attendance.model.AttendanceLog;
 import com.attendance.model.Employee;
+import com.attendance.util.AppTheme;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -70,7 +71,7 @@ public class AttendanceFrame extends JFrame {
     private Timer clockTimer;
 
     public AttendanceFrame() {
-        setTitle("Attendance Kiosk");
+        AppTheme.brand(this, "Attendance");
         setSize(1000, 620);
         setMinimumSize(new Dimension(900, 520));
         setLocationRelativeTo(null);

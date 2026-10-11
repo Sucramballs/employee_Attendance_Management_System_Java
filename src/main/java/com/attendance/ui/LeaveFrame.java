@@ -5,6 +5,7 @@ import com.attendance.dao.LeaveDAO;
 import com.attendance.model.Employee;
 import com.attendance.model.LeaveRecord;
 import com.attendance.model.User;
+import com.attendance.util.AppTheme;
 import com.attendance.util.SessionManager;
 
 import javax.swing.*;
@@ -63,7 +64,7 @@ public class LeaveFrame extends JFrame {
     private final JButton closeBtn = new JButton("CLOSE");
 
     public LeaveFrame() {
-        setTitle("Leave Requests");
+        AppTheme.brand(this, "Leave Requests");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(1100, 700);
         setMinimumSize(new Dimension(950, 600));

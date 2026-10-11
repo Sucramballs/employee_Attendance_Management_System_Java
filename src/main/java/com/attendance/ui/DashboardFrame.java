@@ -5,6 +5,7 @@ import com.attendance.dao.DepartmentDAO;
 import com.attendance.dao.EmployeeDAO;
 import com.attendance.dao.LeaveDAO;
 import com.attendance.model.User;
+import com.attendance.util.AppTheme;
 import com.attendance.util.SessionManager;
 
 import javax.swing.*;
@@ -35,7 +36,7 @@ public class DashboardFrame extends JFrame {
     private ReportFrame reportFrame;
 
     public DashboardFrame() {
-        setTitle("Employee Attendance Management System - Dashboard");
+        AppTheme.brand(this, "Dashboard");
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setSize(950, 520);
         setMinimumSize(new Dimension(800, 460));
@@ -86,8 +87,10 @@ public class DashboardFrame extends JFrame {
         root.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         // header
-        JLabel title = new JLabel("Dashboard");
+        JLabel title = new JLabel(AppTheme.APP_NAME, AppTheme.logoIcon(36), SwingConstants.LEFT);
+        title.setIconTextGap(10);
         title.setFont(new Font("SansSerif", Font.BOLD, 26));
+        title.setForeground(AppTheme.MAROON);
         User u = SessionManager.getCurrentUser();
         JLabel who = new JLabel(u == null ? "Not signed in"
                 : "Signed in as " + u.getFullName() + " (" + u.getRole() + ")");
@@ -99,10 +102,10 @@ public class DashboardFrame extends JFrame {
 
         // metric cards
         JPanel cards = new JPanel(new GridLayout(1, 4, 15, 0));
-        cards.add(createCard("Total Employees", totalEmployeesValue, new Color(41, 98, 255)));
-        cards.add(createCard("Departments", departmentsValue, new Color(0, 150, 136)));
-        cards.add(createCard("Present Today", presentTodayValue, new Color(46, 160, 67)));
-        cards.add(createCard("Pending Leaves", pendingLeavesValue, new Color(230, 126, 34)));
+        cards.add(createCard("Total Employees", totalEmployeesValue, AppTheme.PRIMARY));
+        cards.add(createCard("Departments", departmentsValue, AppTheme.SECONDARY));
+        cards.add(createCard("Present Today", presentTodayValue, AppTheme.SUCCESS));
+        cards.add(createCard("Pending Leaves", pendingLeavesValue, AppTheme.WARNING));
 
         // navigation buttons
         JPanel nav = new JPanel(new GridLayout(1, 4, 15, 0));
